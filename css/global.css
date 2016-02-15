@@ -1,0 +1,48 @@
+#grid {
+	width: 500px;
+	float: left;
+	border: 1px solid black;
+}
+
+.neurone {
+	float: left;
+	border: 1px solid black;
+}
+
+.neurone:hover{
+	background: black;
+}
+
+.active {
+	background: black;
+}
+
+#mainColumn {
+	width: calc(90% - 504px);
+	float: left;
+	margin-left: 5%;
+	margin-right: 5%;
+}
+
+button {
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 25px;
+}
+
+input {
+	width: 100%;
+	padding: 10px;
+}
+
+#choiceText, #findtext {
+	margin-top: -25px;
+	margin-bottom: 25px;
+}
+
+#tutorial {
+	width: 100%;
+	float: left;
+	text-align: center;
+	margin-top: 25px;
+}
