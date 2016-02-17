@@ -2,13 +2,13 @@
 var listOfNeurones = [];
 
 //	Liste de toutes les sorties du système
-var listOfExits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+var listOfExits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 //	Nombre de neurones du système
 var numberOfNeurones = 30;
 
 //	Taux d'apprentissage compris entre 0 et 1
-var learningRate = 0.1;
+var learningRate = 0.07;
 
 //	Seuil d'activation d'un neurone
 var threshold = 0.5;
@@ -16,11 +16,17 @@ var threshold = 0.5;
 //	Valeur d'un neurone lorsqu'il est actif
 var activeInput = 1;
 
+//	Valeur d'un neurone lorsqu'il est inactif
+var disabledInput = 0;
+
 //	Poid initial entre un neurone et une sortie
-var initialWeight = 1;
+var initialWeight = 0;
 
 //	Liste des chiffres
 var listOfNumbers = [
+	//	Chiffre 0
+	[[], [6, 7, 8, 11, 13, 16, 18, 21, 22, 23]],
+
 	//	Chiffre 1
 	[[], [2, 6, 7, 12, 17, 21, 22, 23]],
 
@@ -77,18 +83,18 @@ function CreatePerceptron(numberOfNeurones) {
 			listOfWeights.push(initialWeight);
 		}
 
-		for (var idOfNumber = 0; idOfNumber < listOfNumbers.length; idOfNumber++) {
+		for (var idOfNumber = 0; idOfNumber < listOfExits.length; idOfNumber++) {
 			if (listOfNumbers[idOfNumber][1].indexOf(idOfNeurone) != -1) {
-				listOfNumbers[idOfNumber][0].push(new Neurone(1, listOfWeights));
+				listOfNumbers[idOfNumber][0].push(new Neurone(activeInput, listOfWeights));
 			}
 			else {
-				listOfNumbers[idOfNumber][0].push(new Neurone(0, listOfWeights));
+				listOfNumbers[idOfNumber][0].push(new Neurone(disabledInput, listOfWeights));
 			}
 		}
 
 		$("#grid").append("<div id='" + idOfNeurone + "' class='neurone'></div>");
 
-		listOfNeurones.push(new Neurone(0, listOfWeights));
+		listOfNeurones.push(new Neurone(disabledInput, listOfWeights));
 	}
 
 	$("body").append("<div id='mainColumn'></div>");
@@ -145,7 +151,7 @@ function Learn(idOfExitToLearn, list) {
 			var expectedvalue = 2 * threshold;
 		}
 		else {
-			var expectedvalue = 0;
+			var expectedvalue = disabledInput;
 		}
 
 		//	On boucle sur tous les neurones
@@ -210,13 +216,13 @@ $(document).ready(function() {
 	$(".neurone").click(function() {
 		var idOfNeurone = $(this).attr("id");
 
-		if (listOfNeurones[idOfNeurone].input == 0) {
+		if (listOfNeurones[idOfNeurone].input == disabledInput) {
 			listOfNeurones[idOfNeurone].input = activeInput;
 
 			$(this).addClass("active");
 		}
 		else {
-			listOfNeurones[idOfNeurone].input = 0;
+			listOfNeurones[idOfNeurone].input = disabledInput;
 
 			$(this).removeClass("active");
 		}
@@ -227,7 +233,7 @@ $(document).ready(function() {
 		$(".neurone").removeClass("active");
 
 		for (var idOfNeurone = 0; idOfNeurone < listOfNeurones.length; idOfNeurone++) {
-			listOfNeurones[idOfNeurone].input = 0;
+			listOfNeurones[idOfNeurone].input = disabledInput;
 		}
  	})
 
@@ -257,25 +263,29 @@ $(document).ready(function() {
   		DisplayNumbersFind(listOfExitsFind, "findText");
 	})
 
-
+	//	Permet d'apprendre automatiquement les chiffres
 	$("#training").click(function() {
 		var numbersAreLearn = false;
 		var numbersCompteur = 0;
 
+		//	On boucle tant que tous les nombres ne sont pas appris
 		while(numbersAreLearn == false) {
 
 			var listOfTotalExitsFind = [];
 
-			for (var idOfExit = 0; idOfExit < listOfNumbers.length; idOfExit++) {
+			//	On boucle sur toutes les sorties
+			for (var idOfExit = 0; idOfExit < listOfExits.length; idOfExit++) {
 
 				var numberIsLearn = false;
 
+				//	On fait apprendre le chiffre
 				while(numberIsLearn == false) {
 					Learn(idOfExit, listOfNumbers[idOfExit][0]);
 
 					var listOfNumbersFind = Find(listOfNumbers[idOfExit][0]);
 
-					if (listOfNumbersFind.length == 1 && listOfNumbersFind[0] == idOfExit) {
+					//	On vérfie qu'après le find, le chiffre sortant est celui attendus
+					if ((listOfNumbersFind.length == 1 && listOfNumbersFind[0] == idOfExit) || numbersCompteur > 1000) {
 						numberIsLearn = true;
 					}
 
@@ -283,18 +293,21 @@ $(document).ready(function() {
 				}
 			}
 
-			for (var idOfExit = 0; idOfExit < listOfNumbers.length; idOfExit++) {
+			//	On boucle sur toutes les sorties
+			for (var idOfExit = 0; idOfExit < listOfExits.length; idOfExit++) {
 				var listOfNumbersFind = Find(listOfNumbers[idOfExit][0]);
 
+				//	On définit comme "appris" un chiffre si le chiffre sortant après le find est celui attendus
 				if (listOfNumbersFind.length == 1 && listOfNumbersFind[0] == idOfExit) {
 					listOfTotalExitsFind.push(true);
 				}
 			}
 
-			if (listOfTotalExitsFind.length == listOfNumbers.length || numbersCompteur == 100) {
+			//	On vérifie que tous les chiffres sont appris
+			if (listOfTotalExitsFind.length == listOfExits.length || numbersCompteur > 9000) {
 				numbersAreLearn = true;
 
-				alert("End of traning in " + numbersCompteur + " learn");
+				alert("End of traning in " + numbersCompteur + " learn to " + listOfExits.length + " numbers");
 			}
 		}
 	})
