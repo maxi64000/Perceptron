@@ -1,7 +1,10 @@
+body {
+	margin: 0px;
+}
+
 #grid {
-	width: 500px;
-	float: left;
 	border: 1px solid black;
+	float: left;
 }
 
 .neurone {
@@ -10,34 +13,27 @@
 }
 
 .neurone:hover{
-	background: black;
+	background: silver;
 }
 
 .active {
-	background: black;
+	background: silver;
 }
 
 #mainColumn {
-	width: calc(90% - 504px);
+	position: absolute;
+	width: 100%;
+	top: 0;
+}
+
+input, button {
 	float: left;
-	margin-left: 5%;
-	margin-right: 5%;
+	width: 40%;
+	margin: 10px 5% 0px 5%;
 }
 
-button {
-	width: 100%;
-	padding: 10px;
-	margin-bottom: 25px;
-}
-
-input {
-	width: 100%;
-	padding: 10px;
-}
-
-#choiceText, #findtext {
-	margin-top: -25px;
-	margin-bottom: 25px;
+#learn, #find {
+	margin: 0px 0px 0px -45%;
 }
 
 #tutorial {
