@@ -21,9 +21,9 @@ var activeInput = 1;
 var disabledInput = 0;
 
 //	Poid initial entre un neurone et une sortie
-var initialWeight = 1;
+var initialWeight = 0;
 
-//	Liste des chiffres
+//	Liste des chiffres pour le training
 var listOfNumbers = [
 
 	//	Chiffre 0
